@@ -1,0 +1,29 @@
+li.todo {
+	margin: 0px 0px;
+	padding: 0px 0px;
+	padding-left: 10px;
+	padding-top: 10px;
+	list-style: none; 
+}
+
+li.todo:hover {
+	border: 1px solid #e0e0e0;
+	background-color: #f0f0f0;
+}
+
+li.todo span:hover {
+	cursor: default;
+}
+
+li.todo:hover .del-todo span{
+	display: inline-block;
+}
+
+li.todo span.done {
+	text-decoration: line-through;
+	color: #c0c0c0;
+}
+
+.hide {
+	display: none;
+}

@@ -1,0 +1,159 @@
+doctype 5
+html[class="no-js"][lang="en"]
+  head
+    meta[charset="utf-8"]
+    meta[name="viewport"][content="width=device-width, initial-scale=1.0"]
+    link[rel="stylesheet"][href="/web/css/foundation.css"]
+    link[rel="stylesheet"][href="/web/css/style.css"]
+    script[src="/web/js/vendor/modernizr.js"]
+    title Todo Apps
+  body
+    div.row
+      div[class="large-12 columns"]
+        h1 ToDo App
+
+    div.row
+      div[class="large-8 columns"]
+        input#todo-title[type="text"][name="todo-title"][placeholder="Ketikan apa yg ingin Anda lakukan"]
+
+    div.row.hide[id="error-message"]
+      div[class="large-8 columns"]
+        span[class="error"] Error
+    div.row
+      div[class="large-2 columns"]
+      div[class="large-8 columns"]
+        form[action="/add"][method="POST"]
+          ul.list-todo
+            each $todo in Todos
+              $id = $todo.ID
+              li.todo[data-id=$todo.ID]
+                div.row[data-name="todo"]
+                  div[class="large-8 columns"]
+                    if $todo.Done > 0
+                      input[type="checkbox"][name="id"][value=$todo.ID][checked="true"]
+                      span[class="done"] #{$todo.Title}
+                    else
+                      input[type="checkbox"][name="id"][value=$todo.ID]
+                      span #{$todo.Title}
+                  div[class="large-4 columns del-todo"]
+                    span[class="hide"]
+                      a[javascript="void(0);"][href="/todo/" + $todo.ID] delete
+
+                div.row.hide[data-name="edit-field"]
+                  div[class="large-10 columns"]
+                    input[type="hidden"][name="id"][value=$todo.ID]
+                    input[type="text"][name="title"][value=$todo.Title]
+                  div[class="large-2 columns"]
+                    input[type="button"][name="btn-save"][value="Save"]
+
+      div[class="large-2 columns"]
+    script[type="text/javascript"][src="/web/js/jquery-2.1.4.min.js"]
+    script[type="text/javascript"]
+      $(function() {
+        $('ul.list-todo :checkbox').attr('checked', false);
+        $('#todo-title').val('');
+        $('#todo-title').on('keypress', function(evt) {
+          var _this = $(this);
+
+          if(evt.keyCode == 13) {
+            $.ajax({
+              url: '/todo',
+              data: { name: _this.val() },
+              dataType: 'json',
+              type: 'POST',
+              success: function(response) {
+                if(!parseInt(response.error)) {
+                  $('ul.list-todo').append(response.msg);
+                }
+                _this.val('');
+                console.log(response);
+              }
+            });
+          }
+        });
+
+        $('li.todo input:checkbox').on('click', function(evt) {
+          var _span = $(this).parent().find('span');
+          if(_span.hasClass('done')) {
+            _span.removeAttr('class');
+          }else {
+            _span.attr('class', 'done');
+          }
+        });
+
+        $('li.todo .del-todo a').on('click', function(evt) {
+          var _this = $(this);
+          $.ajax({
+              url: _this.attr('href'),
+              data: { name: 1 },
+              dataType: 'json',
+              type: 'DELETE',
+              success: function(response) {
+                _this.parents('li.todo').remove();
+              }
+          });
+          return false;
+        });
+
+        $('ul.list-todo :checkbox').on('click', function(evt) {
+          var _this = $(this),
+            id = _this.val(),
+            status = _this.parent().find('span.done').length>0? 1: 0;
+          $.ajax({
+              url: '/todo/done',
+              data: { id: id, status: status},
+              dataType: 'json',
+              type: 'POST',
+              success: function(response) {
+              }
+          });
+        });
+
+        $('li.todo').on('dblclick', function(evt) {
+          var _this = $(this),
+            id = _this.attr('data-id');
+
+          $.each($('li.todo'), function(index, val) {
+            var _this = $(this);
+            _this.find('div[data-name="edit-field"]').hide();
+            _this.find('div[class*="row"]').first().removeAttr('style');
+          });
+
+          _this.find('div[data-name="edit-field"]').show();
+          _this.find('div[class*="row"]').first().hide();
+        });
+
+        $('input[name="title"]').keypress(function(event) {
+          var _parent = $(this).parents('div[data-name="edit-field"]');
+          if(event.which == 13) {
+            _parent.find('input[name="btn-save"]').trigger('click');
+          }
+        });
+
+        $('input[name="btn-save"]').on('click', function(evt) {
+          var _parent = $(this).parents('div[data-name="edit-field"]'),
+            _todo = $(this).parents('li.todo').find('div[data-name="todo"]'),
+            name = _parent.find('input[name="title"]').val(),
+            id = _parent.find('input[name="id"]').val(),
+            _this = this;
+
+          $.ajax({
+            url: ['/todo', id].join('/'),
+            data: {title: name},
+            type: 'post',
+            beforeSend: function() { $(_this).val('Saving..'); },
+            success: function(response) {
+              $(_this).val('Save');
+              _parent.hide();
+              _todo.show().removeAttr('style');
+
+              if(parseInt(response.error) == 0) {
+                $(_this).parents('li.todo').find('div.row').first().find('span').first().text(name);
+              }else {
+                $('#error-message').find('span').text(response.msg).end().show();
+              }
+            }
+          });
+          return false;
+        });
+      });

@@ -1,0 +1,13 @@
+<li class="todo">
+	<div class="row">
+		<div class="large-8 columns">
+			<input type="checkbox" value="#{ID}" name="id">
+			<span>#{Title}</span>
+		</div>
+		<div class="large-4 columns del-todo">
+			<span class="hide">
+				<a javascript="void(0);" href="/todo/#{ID}">delete</a>
+			</span>
+		</div>
+	</div>
+</li>

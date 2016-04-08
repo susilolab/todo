@@ -1,0 +1,15 @@
+doctype 5
+html[class="no-js"][lang="en"]
+	head
+		meta[charset="utf-8"]
+		meta[name="viewport"][content="width=device-width, initial-scale=1.0"]
+		link[rel="stylesheet"][href="/web/css/foundation.css"]
+    	script[src="/web/js/vendor/modernizr.js"]
+
+		title Add Todo
+	body
+		div[class="row"]
+			div[class="large-12 columns"]
+				form[action="/"][method="POST"]
+					input[type="text"][name="todo-name"][size="20"]			
+					input[type="submit"][value="Simpan"][class="button"]
