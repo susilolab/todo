@@ -12,7 +12,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/agus/todo/models"
+	"todo/models"
 	"github.com/boltdb/bolt"
 	"github.com/codegangsta/negroni"
 	"github.com/eknkc/amber"
