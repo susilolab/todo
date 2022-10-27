@@ -25,9 +25,9 @@ func (cr *CategoryRepo) FindAll() ([]models.Category, error) {
 	rows := make([]models.Category, 0)
 	err := db.View(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("category"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		b.ForEach(func(k, v []byte) error {
 			category := models.Category{}
 			_ = json.Unmarshal(v, &category)
@@ -50,9 +50,9 @@ func (cr *CategoryRepo) FindOne(id int) (*models.Category, error) {
 	db := cr.Db
 	err = db.View(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("category"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		v := b.Get(idb)
 
 		if v == nil {
@@ -73,9 +73,9 @@ func (cr *CategoryRepo) Create(category *models.Category) (*models.Category, err
 	db := cr.Db
 	err := db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("category"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 
 		id, err := b.NextSequence()
 		if err != nil {
@@ -103,9 +103,9 @@ func (cr *CategoryRepo) Update(id int, category *models.Category) (*models.Categ
 
 	err = cr.Db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("category"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		c := b.Cursor()
 
 		k, v := c.Seek(idb)
@@ -128,9 +128,9 @@ func (cr *CategoryRepo) Delete(id int) error {
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("category"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		c := b.Cursor()
 
 		k, _ := c.Seek(bId)

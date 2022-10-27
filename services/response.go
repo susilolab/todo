@@ -3,14 +3,14 @@ package services
 type Response struct {
 	Error   int         `json:"error"`
 	Message string      `json:"message"`
-	Items    interface{} `json:"items"`
+	Items   interface{} `json:"items"`
 }
 
 func NewResponse(err int, msg string, data interface{}) *Response {
 	return &Response{
 		Error:   err,
 		Message: msg,
-		Items:    data,
+		Items:   data,
 	}
 }
 

@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"errors"
 	"fmt"
-    "errors"
 
 	"todo/models"
 	"todo/utils"
@@ -25,17 +25,17 @@ func (tr *TodoRepo) FindAll() ([]models.Todo, error) {
 	db := tr.Db
 	rows := make([]models.Todo, 0)
 	err := db.View(func(tx *bolt.Tx) error {
-        b := tx.Bucket([]byte("todo"))
-        if b == nil {
-            return errors.New("Bucket todo tidak ada")
-        }
+		b := tx.Bucket([]byte("todo"))
+		if b == nil {
+			return errors.New("Bucket todo tidak ada")
+		}
 
 		b.ForEach(func(k, v []byte) error {
 			todo := models.Todo{}
-            if k != nil {
-                _ = json.Unmarshal(v, &todo)
-                rows = append(rows, todo)
-            }
+			if k != nil {
+				_ = json.Unmarshal(v, &todo)
+				rows = append(rows, todo)
+			}
 			return nil
 		})
 		return nil
@@ -54,9 +54,9 @@ func (tr *TodoRepo) FindOne(id int) (*models.Todo, error) {
 	db := tr.Db
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("todo"))
-        if b == nil {
-            return err
-        }
+		if b == nil {
+			return err
+		}
 		v := b.Get(idb)
 
 		if v == nil {
@@ -77,9 +77,9 @@ func (tr *TodoRepo) Create(todo *models.Todo) (*models.Todo, error) {
 	db := tr.Db
 	err := db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("todo"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 
 		id, err := b.NextSequence()
 		if err != nil {
@@ -107,9 +107,9 @@ func (tr *TodoRepo) Update(id int, todo *models.Todo) (*models.Todo, error) {
 
 	err = tr.Db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("todo"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		c := b.Cursor()
 
 		k, v := c.Seek(idb)
@@ -132,9 +132,9 @@ func (tr *TodoRepo) Delete(id int) error {
 
 	err = db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("todo"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		c := b.Cursor()
 
 		k, _ := c.Seek(bId)
@@ -155,9 +155,9 @@ func (tr *TodoRepo) IsTodoDone(id int) (bool, error) {
 
 	err = tr.Db.View(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("todo"))
-        if err != nil {
-            return err
-        }
+		if err != nil {
+			return err
+		}
 		v := b.Get(bId)
 
 		if v == nil {

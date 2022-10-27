@@ -14,33 +14,33 @@ import (
 
 func TodoService(app *gin.Engine, db *bolt.DB) {
 	todoRepo := repo.NewTodoRepo(db)
-    api := app.Group("/todo")
-    // Index
+	api := app.Group("/todo")
+	// Index
 	api.GET("", func(c *gin.Context) {
 		resp := NewResponse(0, "success", nil)
 		rows, err := todoRepo.FindAll()
-        resp.Items = nil
+		resp.Items = nil
 		if err != nil {
-            resp.Error = 1
+			resp.Error = 1
 			resp.SetErrMsg(err.Error())
 			c.JSON(http.StatusOK, resp)
-            return
+			return
 		}
-        
-        resp.SetData(rows)
+
+		resp.SetData(rows)
 		c.JSON(http.StatusOK, resp)
 	})
 
-    // Hapus group
+	// Hapus group
 	api.DELETE("/:id", func(c *gin.Context) {
 		resp := NewResponse(0, "Todo sukses dihapus", nil)
 		ids := c.Param("id")
-        id, err := strconv.Atoi(ids)
-        if err != nil {
+		id, err := strconv.Atoi(ids)
+		if err != nil {
 			resp.SetErrMsg(err.Error())
 			c.JSON(http.StatusBadRequest, resp)
-            return
-        }
+			return
+		}
 
 		err = todoRepo.Delete(id)
 		if err != nil {
@@ -61,8 +61,8 @@ func TodoService(app *gin.Engine, db *bolt.DB) {
 			return
 		}
 
-        todo.DateCreated = time.Now()
-        todo.DateUpdated = time.Now()
+		todo.DateCreated = time.Now()
+		todo.DateUpdated = time.Now()
 		res, err := todoRepo.Create(&todo)
 		if err != nil {
 			resp.SetErrMsg(err.Error())
@@ -78,12 +78,12 @@ func TodoService(app *gin.Engine, db *bolt.DB) {
 	api.PATCH("/:id", func(c *gin.Context) {
 		resp := NewResponse(0, "Todo sukses diupdate", nil)
 		ids := c.Param("id")
-        id, err := strconv.Atoi(ids)
-        if err != nil {
+		id, err := strconv.Atoi(ids)
+		if err != nil {
 			resp.SetErrMsg(err.Error())
 			c.JSON(http.StatusOK, resp)
-            return
-        }
+			return
+		}
 
 		todo := new(models.Todo)
 		if err := c.BindJSON(todo); err != nil {
@@ -92,7 +92,7 @@ func TodoService(app *gin.Engine, db *bolt.DB) {
 			return
 		}
 
-        _, err = todoRepo.FindOne(id)
+		_, err = todoRepo.FindOne(id)
 		if err != nil {
 			resp.SetErrMsg(err.Error())
 			c.JSON(http.StatusOK, resp)
@@ -114,12 +114,12 @@ func TodoService(app *gin.Engine, db *bolt.DB) {
 	api.GET("/:id", func(c *gin.Context) {
 		resp := NewResponse(0, "success", nil)
 		ids := c.Param("id")
-        id, err := strconv.Atoi(ids)
-        if err != nil {
+		id, err := strconv.Atoi(ids)
+		if err != nil {
 			resp.SetErrMsg(err.Error())
 			c.JSON(http.StatusOK, resp)
-            return
-        }
+			return
+		}
 		todo, err := todoRepo.FindOne(id)
 		if err != nil {
 			resp.SetErrMsg(err.Error())
